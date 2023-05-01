@@ -1,26 +1,21 @@
-import os
 import discord
-from discord.ext import commands
+import os
 
 intents = discord.Intents.default()
-intents.typing = False
-intents.presences = False
+intents.message_content = True
 
-bot = commands.Bot(command_prefix="!", intents=intents)
+client = discord.Client(intents=intents)
 
-@bot.event
+@client.event
 async def on_ready():
-    print(f"{bot.user.name} has connected to Discord!")
+    print(f'We have logged in as {client.user}')
 
-@bot.command(name="register")
-async def test(ctx, username: str):
-	# Check if user already exists
-    # ...
+@client.event
+async def on_message(message):
+    if message.author == client.user:
+        return
 
-    # If user doesn't exist, create a new account
-    # ...
+    if message.content.startswith('$hello'):
+        await message.channel.send('Hello!')
 
-    # Send confirmation message
-    await ctx.send(f"Registered user {username}!")
-
-bot.run(os.getenv("DISCORD_BOT_TOKEN"))
+client.run(os.getenv("DISCORD_BOT_TOKEN"))
